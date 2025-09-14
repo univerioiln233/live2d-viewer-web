@@ -1,0 +1,27 @@
+name: Deploy live2d-viewer-web to GitHub Pages
+
+on:
+  workflow_dispatch:  # 仅手动触发，无任何输入参数
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 拉取代码（指定 gh-pages 分支）
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages  # 检出 gh-pages 分支
+          fetch-depth: 0  # 拉取完整历史
+
+      # 部署到 GitHub Pages 并创建 Deployment 记录
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # GitHub 自动生成的令牌
+          publish_branch: gh-pages  # 部署目标分支（保持与源分支一致）
+          publish_dir: ./  # 部署当前目录（gh-pages 分支的根目录）
+          # 配置 Deployment 信息
+          deployment_branch: gh-pages
+          deployment_id: ${{ github.sha }}  # 用当前 commit SHA 作为部署 ID
+          deployment_description: "Live2D Viewer deployed from ${{ github.sha }}"
